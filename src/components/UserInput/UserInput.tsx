@@ -1,22 +1,37 @@
 import React, { useState } from "react";
 import classes from "./UserInput.module.css";
+import { Investment } from "../../models/investment";
 
-const UserInput: React.FC = () => {
-  useState({
-    
-  })
+const initialUserInput = {
+  "current-savings": 10000,
+  "yearly-contribution": 1200,
+  "expected-return": 7,
+  duration: 10,
+};
+
+type UserInputProps = {
+  onCalculate: (userInput: Investment) => void;
+};
+
+const UserInput: React.FC<UserInputProps> = (props) => {
+  const [userInput, setUserInput] = useState(initialUserInput);
+
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Submit");
+    props.onCalculate(userInput);
   };
 
   const resetHandler = () => {
-    console.log("Reset");
+    setUserInput(initialUserInput);
   };
 
   const inputChangeHandler = (input: string, value: string) => {
-    console.log(input, value);
-    
+    setUserInput((prevInput) => {
+      return {
+        ...prevInput,
+        [input]: +value,
+      };
+    });
   };
 
   return (
@@ -27,6 +42,7 @@ const UserInput: React.FC = () => {
           <input
             type="number"
             id="current-savings"
+            value={userInput["current-savings"]}
             onChange={(event) =>
               inputChangeHandler("current-savings", event.target.value)
             }
@@ -37,6 +53,7 @@ const UserInput: React.FC = () => {
           <input
             type="number"
             id="yearly-contribution"
+            value={userInput["yearly-contribution"]}
             onChange={(event) =>
               inputChangeHandler("yearly-contribution", event.target.value)
             }
@@ -51,6 +68,7 @@ const UserInput: React.FC = () => {
           <input
             type="number"
             id="expected-return"
+            value={userInput["expected-return"]}
             onChange={(event) =>
               inputChangeHandler("expected-return", event.target.value)
             }
@@ -61,6 +79,7 @@ const UserInput: React.FC = () => {
           <input
             type="number"
             id="duration"
+            value={userInput["duration"]}
             onChange={(event) =>
               inputChangeHandler("duration", event.target.value)
             }

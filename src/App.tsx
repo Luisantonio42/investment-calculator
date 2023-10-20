@@ -1,19 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./UI/Header";
 import UserInput from "./components/UserInput/UserInput";
 import ResultsTable from "./components/Results/ResultsTable";
-import {Investment} from "./models/investment";
+import { Investment } from "./models/investment";
 
 const App: React.FC = () => {
+  const [userInput, setUserInput] = useState<Investment>();
 
   const calculateHandler = (userInput: Investment) => {
-    // Should be triggered when form is submitted
-    // You might not directly want to bind it to the submit event on the form though...
+    setUserInput(userInput);
+  };
 
-    const yearlyData = []; // per-year results
-
-    let currentSavings = +userInput["current-savings"]; // feel free to change the shape of this input object!
-    const yearlyContribution = +userInput["yearly-contribution"]; // as mentioned: feel free to change the shape...
+  const yearlyData = []; // per-year results
+  if (userInput) {
+    let currentSavings = +userInput["current-savings"];
+    const yearlyContribution = +userInput["yearly-contribution"];
     const expectedReturn = +userInput["expected-return"] / 100;
     const duration = +userInput["duration"];
 
@@ -29,21 +30,20 @@ const App: React.FC = () => {
         yearlyContribution: yearlyContribution,
       });
     }
-
-    // do something with yearlyData ...
-  };
-
-  console.log(calculateHandler);
+  }
 
   return (
     <div>
       <Header />
-      <UserInput />
+      <UserInput onCalculate={calculateHandler} />
 
-      {/* Todo: Show below table conditionally (only once result data is available) */}
-      {/* Show fallback text if no data is available */}
-
-      <ResultsTable />
+      {!userInput && <p style={{textAlign: "center"}}>No investment calculated yet.</p>}
+      {userInput && (
+        <ResultsTable
+          data={yearlyData}
+          initialInvestment={userInput["current-savings"]}
+        />
+      )}
     </div>
   );
 };

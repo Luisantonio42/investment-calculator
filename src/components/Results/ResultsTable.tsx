@@ -1,7 +1,17 @@
 import React from "react";
 import classes from "./ResultsTable.module.css";
+import { formatter } from "../../util/util";
+type ResultsTableProps = {
+  data: {
+    year: number;
+    yearlyInterest: number;
+    savingsEndOfYear: number;
+    yearlyContribution: number;
+  }[];
+  initialInvestment: number;
+};
 
-const ResultsTable: React.FC = () => {
+const ResultsTable: React.FC<ResultsTableProps> = (props) => {
   return (
     <table className={classes["result"]}>
       <thead>
@@ -14,13 +24,25 @@ const ResultsTable: React.FC = () => {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>YEAR NUMBER</td>
-          <td>TOTAL SAVINGS END OF YEAR</td>
-          <td>INTEREST GAINED IN YEAR</td>
-          <td>TOTAL INTEREST GAINED</td>
-          <td>TOTAL INVESTED CAPITAL</td>
-        </tr>
+        {props.data.map((data) => (
+          <tr key={data.year}>
+            <td>{data.year}</td>
+            <td>{formatter.format(data.savingsEndOfYear)}</td>
+            <td>{formatter.format(data.yearlyInterest)}</td>
+            <td>
+              {formatter.format(
+                data.savingsEndOfYear -
+                  props.initialInvestment -
+                  data.yearlyContribution * data.year
+              )}
+            </td>
+            <td>
+              {formatter.format(
+                props.initialInvestment + data.yearlyContribution * data.year
+              )}
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
